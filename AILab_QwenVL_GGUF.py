@@ -397,19 +397,25 @@ class QwenVLGGUFBase:
         self.chat_handler = None
         if has_mmproj:
             handler_cls = None
-            try:
-                from llama_cpp.llama_chat_format import Qwen3VLChatHandler
-
-                handler_cls = Qwen3VLChatHandler
-            except ImportError:
-                try:
-                    from llama_cpp.llama_chat_format import Qwen25VLChatHandler
-
-                    handler_cls = Qwen25VLChatHandler
-                except ImportError:
-                    raise RuntimeError(
-                        "[QwenVL] Missing Qwen VL chat handler in llama_cpp. Install the correct fork/wheel. See docs/GGUF_MANUAL_INSTALL.md"
-                    )
+            handler_candidates = [
+                "Qwen36VLChatHandler",
+                "Qwen35VLChatHandler",
+                "Qwen3_5VLChatHandler",
+                "Qwen3VLChatHandler",
+                "Qwen25VLChatHandler",
+            ]
+            import importlib
+            chat_format_mod = importlib.import_module("llama_cpp.llama_chat_format")
+            for cls_name in handler_candidates:
+                cls = getattr(chat_format_mod, cls_name, None)
+                if cls is not None:
+                    handler_cls = cls
+                    print(f"[QwenVL] Using chat handler: {cls_name}")
+                    break
+            if handler_cls is None:
+                raise RuntimeError(
+                    "[QwenVL] Missing Qwen VL chat handler in llama_cpp. Install the correct fork/wheel. See docs/GGUF_MANUAL_INSTALL.md"
+                )
 
             mmproj_kwargs = {
                 "clip_model_path": str(mmproj_path),

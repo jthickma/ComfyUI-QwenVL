@@ -351,6 +351,20 @@ def set_sage_attention(model):
         attention_classes.append((Qwen3VLTextAttention, qwen3vl_apply_rotary))
     except ImportError:
         pass
+
+    # Qwen3.5 / Qwen3.6 unified (qwen3_5 dense)
+    try:
+        from transformers.models.qwen3_5.modeling_qwen3_5 import Qwen3_5Attention, apply_rotary_pos_emb as qwen3_5_apply_rotary
+        attention_classes.append((Qwen3_5Attention, qwen3_5_apply_rotary))
+    except ImportError:
+        pass
+
+    # Qwen3.6 MoE (qwen3_5_moe)
+    try:
+        from transformers.models.qwen3_5_moe.modeling_qwen3_5_moe import Qwen3_5MoeAttention, apply_rotary_pos_emb as qwen3_5_moe_apply_rotary
+        attention_classes.append((Qwen3_5MoeAttention, qwen3_5_moe_apply_rotary))
+    except ImportError:
+        pass
     
     if not attention_classes:
         print("[QwenVL] Could not import any attention classes for SageAttention patching")
@@ -508,9 +522,22 @@ def enforce_memory(model_name, quantization, device_info):
     return quantization
 
 def is_fp8_model(model_name: str) -> bool:
-    """Check if model name indicates it's a pre-quantized FP8 model."""
-    fp8_indicators = ["-fp8", "_fp8", "-FP8", "_FP8"]
-    return any(indicator in model_name for indicator in fp8_indicators)
+    """Check if model name indicates a pre-quantized FP8/NVFP4/modelopt checkpoint
+    that needs the same special-load path (no device_map, dtype=auto)."""
+    indicators = [
+        "-fp8", "_fp8", "-FP8", "_FP8",
+        "-nvfp4", "_nvfp4", "-NVFP4", "_NVFP4",
+        "-modelopt", "_modelopt",
+    ]
+    return any(ind in model_name for ind in indicators)
+
+
+def is_unified_qwen35_family(model_name: str) -> bool:
+    """Qwen3.5 / Qwen3.6 unified VL models. Default to enable_thinking=False
+    in chat template (these models reason heavily by default)."""
+    name = model_name.lower()
+    return "qwen3.5" in name or "qwen3_5" in name or "qwen3-5" in name \
+        or "qwen3.6" in name or "qwen3_6" in name or "qwen3-6" in name
 
 
 def quantization_config(model_name, quantization):
@@ -783,7 +810,15 @@ class QwenVLBase:
             if frames:
                 conversation[0]["content"].append({"type": "video", "video": frames})
         conversation[0]["content"].append({"type": "text", "text": prompt_text})
-        chat = self.processor.apply_chat_template(conversation, tokenize=False, add_generation_prompt=True)
+        tmpl_kwargs = {"tokenize": False, "add_generation_prompt": True}
+        model_name = self.current_signature[0] if self.current_signature else ""
+        if is_unified_qwen35_family(model_name):
+            tmpl_kwargs["enable_thinking"] = False
+        try:
+            chat = self.processor.apply_chat_template(conversation, **tmpl_kwargs)
+        except (TypeError, ValueError):
+            tmpl_kwargs.pop("enable_thinking", None)
+            chat = self.processor.apply_chat_template(conversation, **tmpl_kwargs)
         images = [item["image"] for item in conversation[0]["content"] if item["type"] == "image"]
         video_frames = [frame for item in conversation[0]["content"] if item["type"] == "video" for frame in item["video"]]
         videos = [video_frames] if video_frames else None

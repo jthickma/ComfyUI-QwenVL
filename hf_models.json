@@ -144,6 +144,118 @@
         "full": 24.0
       }
     },
+    "Qwen3.6-35B-A3B": {
+      "repo_id": "Qwen/Qwen3.6-35B-A3B",
+      "default": false,
+      "quantized": false,
+      "vram_requirement": {
+        "full": 72.0,
+        "8bit": 38.0,
+        "4bit": 22.0
+      }
+    },
+    "Qwen3.6-35B-A3B-FP8": {
+      "repo_id": "Qwen/Qwen3.6-35B-A3B-FP8",
+      "default": false,
+      "quantized": true,
+      "vram_requirement": {
+        "full": 38.0
+      }
+    },
+    "Huihui-Qwen3.6-27B-abliterated-NVFP4-MTP": {
+      "repo_id": "sakamakismile/Huihui-Qwen3.6-27B-abliterated-NVFP4-MTP",
+      "default": false,
+      "quantized": true,
+      "vram_requirement": {
+        "full": 22.0
+      }
+    },
+    "Huihui-Qwen3.6-27B-abliterated": {
+      "repo_id": "huihui-ai/Huihui-Qwen3.6-27B-abliterated",
+      "default": false,
+      "quantized": false,
+      "vram_requirement": {
+        "full": 56.0,
+        "8bit": 30.0,
+        "4bit": 17.0
+      }
+    },
+    "Qwen3.6-27B": {
+      "repo_id": "Qwen/Qwen3.6-27B",
+      "default": false,
+      "quantized": false,
+      "vram_requirement": {
+        "full": 56.0,
+        "8bit": 30.0,
+        "4bit": 17.0
+      }
+    },
+    "Qwen3.6-27B-FP8": {
+      "repo_id": "Qwen/Qwen3.6-27B-FP8",
+      "default": false,
+      "quantized": true,
+      "vram_requirement": {
+        "full": 30.0
+      }
+    },
+    "Qwen3.5-27B": {
+      "repo_id": "Qwen/Qwen3.5-27B",
+      "default": false,
+      "quantized": false,
+      "vram_requirement": {
+        "full": 56.0,
+        "8bit": 30.0,
+        "4bit": 17.0
+      }
+    },
+    "Qwen3.5-27B-FP8": {
+      "repo_id": "Qwen/Qwen3.5-27B-FP8",
+      "default": false,
+      "quantized": true,
+      "vram_requirement": {
+        "full": 30.0
+      }
+    },
+    "Qwen3.5-9B": {
+      "repo_id": "Qwen/Qwen3.5-9B",
+      "default": false,
+      "quantized": false,
+      "vram_requirement": {
+        "full": 20.0,
+        "8bit": 11.0,
+        "4bit": 6.5
+      }
+    },
+    "Qwen3.5-4B": {
+      "repo_id": "Qwen/Qwen3.5-4B",
+      "default": false,
+      "quantized": false,
+      "vram_requirement": {
+        "full": 10.0,
+        "8bit": 5.5,
+        "4bit": 3.5
+      }
+    },
+    "Qwen3.5-2B": {
+      "repo_id": "Qwen/Qwen3.5-2B",
+      "default": false,
+      "quantized": false,
+      "vram_requirement": {
+        "full": 5.0,
+        "8bit": 3.0,
+        "4bit": 2.0
+      }
+    },
+    "Qwen3.5-0.8B": {
+      "repo_id": "Qwen/Qwen3.5-0.8B",
+      "default": false,
+      "quantized": false,
+      "vram_requirement": {
+        "full": 2.5,
+        "8bit": 1.8,
+        "4bit": 1.2
+      }
+    },
     "Qwen2.5-VL-3B-Instruct": {
       "repo_id": "Qwen/Qwen2.5-VL-3B-Instruct",
       "default": false,
